@@ -1,30 +1,32 @@
 export type themeType =
-  | "Modern"
-  | "Vintage"
-  | "Minimalist"
-  | "Professional"
-  | "Tropical";
+  | "모던"
+  | "빈티지"
+  | "미니멀리스트"
+  | "프로페셔널"
+  | "트로피칼"
+  | "옵션을 선택하세요";
 
 export type roomType =
-  | "Living Room"
-  | "Dining Room"
-  | "Bedroom"
-  | "Bathroom"
-  | "Office"
-  | "Gaming Room";
+  | "거실"
+  | "식당"
+  | "침실"
+  | "화장실"
+  | "사무실"
+  | "게임방"
+  | "옵션을 선택하세요";
 
 export const themes: themeType[] = [
-  "Modern",
-  "Minimalist",
-  "Professional",
-  "Tropical",
-  "Vintage",
+  "모던",
+  "미니멀리스트",
+  "프로페셔널",
+  "트로피칼",
+  "빈티지",
 ];
 export const rooms: roomType[] = [
-  "Living Room",
-  "Dining Room",
-  "Office",
-  "Bedroom",
-  "Bathroom",
-  "Gaming Room",
+  "거실",
+  "식당",
+  "사무실",
+  "침실",
+  "화장실",
+  "게임방",
 ];
