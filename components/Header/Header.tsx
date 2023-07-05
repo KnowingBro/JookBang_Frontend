@@ -45,11 +45,11 @@ export default function Header() {
       <div>
         {localStorage.accessToken ? (
           <>
-            <button className="bg-gray100 w-[133px] h-[40px] text-black mr-3">
-              {userName}
+            <button className="bg-orange100 w-[88px] h-[36px] text-white mr-3 rounded-lg">
+              마이룸{/* {userName} */}
             </button>
             <button
-              className="bg-gray100 w-[133px] h-[40px] text-black"
+              className="bg-gray100 w-[88px] h-[36px] text-gary200 rounded-lg"
               onClick={handleLogout}
             >
               로그아웃

@@ -12,6 +12,8 @@ module.exports = {
       },
       colors: {
         gray100: "#EFEFEF",
+        gary200: "#525252",
+        orange100: "#FF6C3E"
       }
     },
   },
