@@ -2,10 +2,10 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadDropzone } from "react-uploader";
 import { Uploader } from "uploader";
-import { CompareSlider } from "../../components/CompareSlider";
+import { CompareSlider } from "../../components/CompareSlider/CompareSlider";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import LoadingDots from "../../components/LoadingDots";
@@ -16,6 +16,8 @@ import downloadPhoto from "../../utils/downloadPhoto";
 import DropDown from "../../components/DropDown";
 import { roomType, rooms, themeType, themes } from "../../utils/dropdownTypes";
 import * as S from "./style";
+import Link from "next/link";
+import { styled } from "styled-components";
 
 // Configuration for the uploader
 const uploader = Uploader({
@@ -47,7 +49,7 @@ const options = {
 
 export default function DreamPage() {
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
-  const [restoredImage, setRestoredImage] = useState<string | null>(null);
+  const [restoredImage, setRestoredImage] = useState<string[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [restoredLoaded, setRestoredLoaded] = useState<boolean>(false);
   const [sideBySide, setSideBySide] = useState<boolean>(false);
@@ -72,30 +74,46 @@ export default function DreamPage() {
     />
   );
 
+  const Container = styled.div`
+    width: 100ww;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 123px;
+  `
+
   async function generatePhoto(fileUrl: string) {
     await new Promise((resolve) => setTimeout(resolve, 200));
     setLoading(true);
-    const res = await fetch("/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ imageUrl: fileUrl, theme, room }),
-    });
-    const newPhoto = await res.json();
-    if (res.status !== 200) {
-      setError(newPhoto);
-    } else {
-      setRestoredImage(newPhoto[1]);
+    const newArr = []
+    for (let i = 0; i < 4; i++) {
+      const res = await fetch("/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl: fileUrl, theme, room }),
+      });
+      const newPhoto = await res.json();
+      if (res.status !== 200) {
+        setError(newPhoto);
+      } else {
+        newArr.push(newPhoto[1])
+      }
     }
+    setRestoredImage(newArr);
     setTimeout(() => {
       setLoading(false);
     }, 1300);
   }
-  console.log(loading);
+
+  useEffect(() => {
+    console.log(restoredImage)
+  }, [restoredImage]);
+
   return (
     <>
-      <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
+      <Container>
         <Header />
         <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
           <S.H1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-100 sm:text-6xl mb-5">
@@ -188,24 +206,42 @@ export default function DreamPage() {
                       <Image
                         alt="original photo"
                         src={originalPhoto}
-                        className="rounded-2xl relative w-full h-96"
-                        width={475}
-                        height={475}
+                        style={{ width: "582px", height: "370px", borderRadius: "16px" }}
+                        width={582}
+                        height={370}
                       />
                       <h2 className="mb-1 font-medium text-lg h4">Before</h2>
                     </div>
                     <div className="sm:mt-0 mt-8">
-                      <a href={restoredImage} target="_blank" rel="noreferrer">
-                        <Image
-                          alt="restored photo"
-                          src={restoredImage}
-                          className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in w-full h-96"
-                          width={475}
-                          height={475}
-                          onLoadingComplete={() => setRestoredLoaded(true)}
-                        />
-                        <h2 className="mb-1 font-medium text-lg h4">After</h2>
-                      </a>
+                      <h2 className="mb-1 font-medium text-lg">Generated Room</h2>
+                      <S.ResultImage>
+                        {restoredImage.slice(0, 2).map((value: string) => {
+                          return (
+                            <Image
+                              alt="restored photo"
+                              style={{ borderRadius: "16px" }}
+                              src={value}
+                              width={281}
+                              height={175}
+                              onLoadingComplete={() => setRestoredLoaded(true)}
+                            />
+                          )
+                        })}
+                      </S.ResultImage>
+                      <S.ResultImage>
+                        {restoredImage.slice(2, 4).map((value: string) => {
+                          return (
+                            <Image
+                              alt="restored photo"
+                              style={{ borderRadius: "16px" }}
+                              src={value}
+                              width={281}
+                              height={175}
+                              onLoadingComplete={() => setRestoredLoaded(true)}
+                            />
+                          )
+                        })}
+                      </S.ResultImage>
                     </div>
                   </div>
                 )}
@@ -249,7 +285,7 @@ export default function DreamPage() {
             </AnimatePresence>
           </ResizablePanel>
         </main>
-      </div>
+      </Container>
       <Footer />
     </>
   );

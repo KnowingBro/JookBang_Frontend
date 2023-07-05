@@ -7,17 +7,19 @@ function forceDownload(blobUrl: string, filename: string) {
   a.remove();
 }
 
-export default function downloadPhoto(url: string, filename: string) {
-  fetch(url, {
-    headers: new Headers({
-      Origin: location.origin,
-    }),
-    mode: "cors",
-  })
-    .then((response) => response.blob())
-    .then((blob) => {
-      let blobUrl = window.URL.createObjectURL(blob);
-      forceDownload(blobUrl, filename);
+export default function downloadPhoto(url: string[], filename: string) {
+  url.map((value: string)=>{
+    fetch(value, {
+      headers: new Headers({
+        Origin: location.origin,
+      }),
+      mode: "cors",
     })
-    .catch((e) => console.error(e));
+      .then((response) => response.blob())
+      .then((blob) => {
+        let blobUrl = window.URL.createObjectURL(blob);
+        forceDownload(blobUrl, filename);
+      })
+      .catch((e) => console.error(e));
+  })
 }
