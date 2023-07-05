@@ -52,3 +52,13 @@ export const Btn = styled.button`
     border-radius: 8px;
     color: white;
 `
+
+export const MainImages = styled.div`
+    margin-top: 160px;
+    width: 100%;
+    display: flex;
+    gap: 30px;
+`
+
+export const Image = styled.img`
+`
