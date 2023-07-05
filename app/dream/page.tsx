@@ -103,178 +103,180 @@ export default function DreamPage() {
   }, [restoredImage]);
 
   return (
-    <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
-      <Header />
-      <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
-        <S.H1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-100 sm:text-6xl mb-5">
-          방 리모델링하기
-        </S.H1>
-        <ResizablePanel>
-          <AnimatePresence mode="wait">
-            <motion.div className="flex justify-between items-center w-full flex-col mt-4">
-              {!restoredImage && (
-                <>
-                  <div className="space-y-4 w-full max-w-sm">
-                    <div className="flex mt-3 items-center space-x-3">
-                      <S.P1 className="text-left font-medium">
-                        방 테마 선택하기
-                      </S.P1>
+    <>
+      <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
+        <Header />
+        <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
+          <S.H1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-100 sm:text-6xl mb-5">
+            방 리모델링하기
+          </S.H1>
+          <ResizablePanel>
+            <AnimatePresence mode="wait">
+              <motion.div className="flex justify-between items-center w-full flex-col mt-4">
+                {!restoredImage && (
+                  <>
+                    <div className="space-y-4 w-full max-w-sm">
+                      <div className="flex mt-3 items-center space-x-3">
+                        <S.P1 className="text-left font-medium">
+                          방 테마 선택하기
+                        </S.P1>
+                      </div>
+                      <DropDown
+                        theme={theme}
+                        setTheme={(newTheme) =>
+                          setTheme(newTheme as typeof theme)
+                        }
+                        themes={themes}
+                      />
                     </div>
-                    <DropDown
-                      theme={theme}
-                      setTheme={(newTheme) =>
-                        setTheme(newTheme as typeof theme)
-                      }
-                      themes={themes}
-                    />
-                  </div>
-                  <div className="space-y-4 w-full max-w-sm">
-                    <div className="flex mt-10 items-center space-x-3">
-                      <S.P1 className="text-left font-medium">
-                        방 유형 선택
-                      </S.P1>
+                    <div className="space-y-4 w-full max-w-sm">
+                      <div className="flex mt-10 items-center space-x-3">
+                        <S.P1 className="text-left font-medium">
+                          방 유형 선택
+                        </S.P1>
+                      </div>
+                      <DropDown
+                        theme={room}
+                        setTheme={(newRoom) => setRoom(newRoom as typeof room)}
+                        themes={rooms}
+                      />
                     </div>
-                    <DropDown
-                      theme={room}
-                      setTheme={(newRoom) => setRoom(newRoom as typeof room)}
-                      themes={rooms}
-                    />
-                  </div>
-                  <div className="mt-4 w-full max-w-sm">
-                    <div className="flex mt-6 w-96 items-center space-x-3">
-                      <S.P2 className="text-left font-medium">
-                        방 사진 업로드
-                      </S.P2>
+                    <div className="mt-4 w-full max-w-sm">
+                      <div className="flex mt-6 w-96 items-center space-x-3">
+                        <S.P2 className="text-left font-medium">
+                          방 사진 업로드
+                        </S.P2>
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
-              <div
-                className={`${restoredLoaded ? "visible mt-6 -ml-8" : "invisible"
-                  }`}
-              >
-                <Toggle
-                  className={`${restoredLoaded ? "visible mb-6" : "invisible"}`}
-                  sideBySide={sideBySide}
-                  setSideBySide={(newVal) => setSideBySide(newVal)}
-                />
-              </div>
-              {restoredLoaded && sideBySide && (
-                <CompareSlider
-                  original={originalPhoto!}
-                  restored={restoredImage!}
-                />
-              )}
-              {!originalPhoto && <UploadDropZone />}
-              {originalPhoto && !restoredImage && (
-                <Image
-                  alt="original photo"
-                  src={originalPhoto}
-                  className="rounded-2xl h-96"
-                  width={582}
-                  height={450}
-                />
-              )}
-              {originalPhoto && !restoredImage && (
-                <S.Button
-                  onClick={() => {
-                    generatePhoto(originalPhoto);
-                    setIsRemodeled(true);
-                  }}
-                >
-                  {loading ? (
-                    <LoadingDots color="white" style="large" />
-                  ) : (
-                    "리모델링하기"
-                  )}
-                </S.Button>
-              )}
-              {restoredImage && originalPhoto && !sideBySide && (
-                <div className="flex sm:space-x-4 sm:flex-row flex-col">
-                  <div>
-                    <h2 className="mb-1 font-medium text-lg">Original Room</h2>
-                    <Image
-                      alt="original photo"
-                      src={originalPhoto}
-                      style={{width: "582px", height: "370px", borderRadius: "16px"}}
-                      width={582}
-                      height={370}
-                    />
-                  </div>
-                  <div className="sm:mt-0 mt-8">
-                    <h2 className="mb-1 font-medium text-lg">Generated Room</h2>
-                    <S.ResultImage>
-                      {restoredImage.slice(0, 2).map((value: string) => {
-                        return (
-                          <Image
-                            alt="restored photo"
-                            style={{borderRadius: "16px"}}
-                            src={value}
-                            width={281}
-                            height={175}
-                            onLoadingComplete={() => setRestoredLoaded(true)}
-                          />
-                        )
-                      })}
-                    </S.ResultImage>
-                    <S.ResultImage>
-                      {restoredImage.slice(2, 4).map((value: string) => {
-                        return (
-                          <Image
-                            alt="restored photo"
-                            style={{borderRadius: "16px"}}
-                            src={value}
-                            width={281}
-                            height={175}
-                            onLoadingComplete={() => setRestoredLoaded(true)}
-                          />
-                        )
-                      })}
-                    </S.ResultImage>
-                  </div>
-                </div>
-              )}
-              {error && (
+                  </>
+                )}
                 <div
-                  className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mt-8"
-                  role="alert"
+                  className={`${restoredLoaded ? "visible mt-6 -ml-8" : "invisible"
+                    }`}
                 >
-                  <span className="block sm:inline">{error}</span>
+                  <Toggle
+                    className={`${restoredLoaded ? "visible mb-6" : "invisible"}`}
+                    sideBySide={sideBySide}
+                    setSideBySide={(newVal) => setSideBySide(newVal)}
+                  />
                 </div>
-              )}
-              <div className="flex space-x-2 justify-center">
-                {originalPhoto && loading && !isRemodeled && (
-                  <button
-                    onClick={() => {
-                      setOriginalPhoto(null);
-                      setRestoredImage(null);
-                      setRestoredLoaded(false);
-                      setError(null);
-                    }}
-                    className="bg-blue-500 rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-blue-500/80 transition"
-                  >
-                    Generate New Room
-                  </button>
+                {restoredLoaded && sideBySide && (
+                  <CompareSlider
+                    original={originalPhoto!}
+                    restored={restoredImage!}
+                  />
                 )}
-                {restoredLoaded && (
-                  <button
-                    onClick={() => {
-                      downloadPhoto(
-                        restoredImage!,
-                        appendNewToName(photoName!),
-                      );
-                    }}
-                    className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-8 hover:bg-gray-100 transition"
-                  >
-                    Download Generated Room
-                  </button>
+                {!originalPhoto && <UploadDropZone />}
+                {originalPhoto && !restoredImage && (
+                  <Image
+                    alt="original photo"
+                    src={originalPhoto}
+                    className="rounded-2xl h-96"
+                    width={582}
+                    height={450}
+                  />
                 )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </ResizablePanel>
-      </main>
+                {originalPhoto && !restoredImage && (
+                  <S.Button
+                    onClick={() => {
+                      generatePhoto(originalPhoto);
+                      setIsRemodeled(true);
+                    }}
+                  >
+                    {loading ? (
+                      <LoadingDots color="white" style="large" />
+                    ) : (
+                      "리모델링하기"
+                    )}
+                  </S.Button>
+                )}
+                {restoredImage && originalPhoto && !sideBySide && (
+                  <div className="flex sm:space-x-4 sm:flex-row flex-col">
+                    <div>
+                      <h2 className="mb-1 font-medium text-lg">Original Room</h2>
+                      <Image
+                        alt="original photo"
+                        src={originalPhoto}
+                        style={{ width: "582px", height: "370px", borderRadius: "16px" }}
+                        width={582}
+                        height={370}
+                      />
+                    </div>
+                    <div className="sm:mt-0 mt-8">
+                      <h2 className="mb-1 font-medium text-lg">Generated Room</h2>
+                      <S.ResultImage>
+                        {restoredImage.slice(0, 2).map((value: string) => {
+                          return (
+                            <Image
+                              alt="restored photo"
+                              style={{ borderRadius: "16px" }}
+                              src={value}
+                              width={281}
+                              height={175}
+                              onLoadingComplete={() => setRestoredLoaded(true)}
+                            />
+                          )
+                        })}
+                      </S.ResultImage>
+                      <S.ResultImage>
+                        {restoredImage.slice(2, 4).map((value: string) => {
+                          return (
+                            <Image
+                              alt="restored photo"
+                              style={{ borderRadius: "16px" }}
+                              src={value}
+                              width={281}
+                              height={175}
+                              onLoadingComplete={() => setRestoredLoaded(true)}
+                            />
+                          )
+                        })}
+                      </S.ResultImage>
+                    </div>
+                  </div>
+                )}
+                {error && (
+                  <div
+                    className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mt-8"
+                    role="alert"
+                  >
+                    <span className="block sm:inline">{error}</span>
+                  </div>
+                )}
+                <div className="flex space-x-2 justify-center">
+                  {originalPhoto && loading && !isRemodeled && (
+                    <button
+                      onClick={() => {
+                        setOriginalPhoto(null);
+                        setRestoredImage(null);
+                        setRestoredLoaded(false);
+                        setError(null);
+                      }}
+                      className="bg-blue-500 rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-blue-500/80 transition"
+                    >
+                      Generate New Room
+                    </button>
+                  )}
+                  {restoredLoaded && (
+                    <button
+                      onClick={() => {
+                        downloadPhoto(
+                          restoredImage!,
+                          appendNewToName(photoName!),
+                        );
+                      }}
+                      className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-8 hover:bg-gray-100 transition"
+                    >
+                      Download Generated Room
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </ResizablePanel>
+        </main>
+      </div>
       <Footer />
-    </div>
+    </>
   );
 }
