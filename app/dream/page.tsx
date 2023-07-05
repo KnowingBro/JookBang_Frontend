@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadDropzone } from "react-uploader";
 import { Uploader } from "uploader";
 import { CompareSlider } from "../../components/CompareSlider";
@@ -16,6 +16,7 @@ import downloadPhoto from "../../utils/downloadPhoto";
 import DropDown from "../../components/DropDown";
 import { roomType, rooms, themeType, themes } from "../../utils/dropdownTypes";
 import * as S from "./style";
+import Link from "next/link";
 
 // Configuration for the uploader
 const uploader = Uploader({
@@ -47,7 +48,7 @@ const options = {
 
 export default function DreamPage() {
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
-  const [restoredImage, setRestoredImage] = useState<string | null>(null);
+  const [restoredImage, setRestoredImage] = useState<string[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [restoredLoaded, setRestoredLoaded] = useState<boolean>(false);
   const [sideBySide, setSideBySide] = useState<boolean>(false);
@@ -75,181 +76,192 @@ export default function DreamPage() {
   async function generatePhoto(fileUrl: string) {
     await new Promise((resolve) => setTimeout(resolve, 200));
     setLoading(true);
-    const res = await fetch("/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ imageUrl: fileUrl, theme, room }),
-    });
-    const newPhoto = await res.json();
-    if (res.status !== 200) {
-      setError(newPhoto);
-    } else {
-      setRestoredImage(newPhoto[1]);
+    const newArr = []
+    for(let i=0;i<4;i++){
+      const res = await fetch("/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl: fileUrl, theme, room }),
+      });
+      const newPhoto = await res.json();
+      if (res.status !== 200) {
+        setError(newPhoto);
+      } else {
+        newArr.push(newPhoto[1])
+      }
     }
+    setRestoredImage(newArr);
     setTimeout(() => {
       setLoading(false);
     }, 1300);
   }
-  console.log(loading);
+
+  useEffect(()=>{
+    console.log(restoredImage)
+  }, [restoredImage]);
+
   return (
-    <>
-      <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
-        <Header />
-        <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
-          <S.H1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-100 sm:text-6xl mb-5">
-            방 리모델링하기
-          </S.H1>
-          <ResizablePanel>
-            <AnimatePresence mode="wait">
-              <motion.div className="flex justify-between items-center w-full flex-col mt-4">
-                {!restoredImage && (
-                  <>
-                    <div className="space-y-4 w-full max-w-sm">
-                      <div className="flex mt-3 items-center space-x-3">
-                        <S.P1 className="text-left font-medium">
-                          방 테마 선택하기
-                        </S.P1>
-                      </div>
-                      <DropDown
-                        theme={theme}
-                        setTheme={(newTheme) =>
-                          setTheme(newTheme as typeof theme)
-                        }
-                        themes={themes}
-                      />
+    <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
+      <Header />
+      <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
+        <S.H1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-100 sm:text-6xl mb-5">
+          방 리모델링하기
+        </S.H1>
+        <ResizablePanel>
+          <AnimatePresence mode="wait">
+            <motion.div className="flex justify-between items-center w-full flex-col mt-4">
+              {!restoredImage && (
+                <>
+                  <div className="space-y-4 w-full max-w-sm">
+                    <div className="flex mt-3 items-center space-x-3">
+                      <S.P1 className="text-left font-medium">
+                        방 테마 선택하기
+                      </S.P1>
                     </div>
-                    <div className="space-y-4 w-full max-w-sm">
-                      <div className="flex mt-10 items-center space-x-3">
-                        <S.P1 className="text-left font-medium">
-                          방 유형 선택
-                        </S.P1>
-                      </div>
-                      <DropDown
-                        theme={room}
-                        setTheme={(newRoom) => setRoom(newRoom as typeof room)}
-                        themes={rooms}
-                      />
+                    <DropDown
+                      theme={theme}
+                      setTheme={(newTheme) =>
+                        setTheme(newTheme as typeof theme)
+                      }
+                      themes={themes}
+                    />
+                  </div>
+                  <div className="space-y-4 w-full max-w-sm">
+                    <div className="flex mt-10 items-center space-x-3">
+                      <S.P1 className="text-left font-medium">
+                        방 유형 선택
+                      </S.P1>
                     </div>
-                    <div className="mt-4 w-full max-w-sm">
-                      <div className="flex mt-6 w-96 items-center space-x-3">
-                        <S.P2 className="text-left font-medium">
-                          방 사진 업로드
-                        </S.P2>
-                      </div>
+                    <DropDown
+                      theme={room}
+                      setTheme={(newRoom) => setRoom(newRoom as typeof room)}
+                      themes={rooms}
+                    />
+                  </div>
+                  <div className="mt-4 w-full max-w-sm">
+                    <div className="flex mt-6 w-96 items-center space-x-3">
+                      <S.P2 className="text-left font-medium">
+                        방 사진 업로드
+                      </S.P2>
                     </div>
-                  </>
-                )}
-                <div
-                  className={`${restoredLoaded ? "visible mt-6 -ml-8" : "invisible"
-                    }`}
+                  </div>
+                </>
+              )}
+              <div
+                className={`${
+                  restoredLoaded ? "visible mt-6 -ml-8" : "invisible"
+                }`}
+              >
+                <Toggle
+                  className={`${restoredLoaded ? "visible mb-6" : "invisible"}`}
+                  sideBySide={sideBySide}
+                  setSideBySide={(newVal) => setSideBySide(newVal)}
+                />
+              </div>
+              {/* {restoredLoaded && sideBySide && (
+                <CompareSlider
+                  original={originalPhoto!}
+                  restored={restoredImage!}
+                />
+              )} */}
+              {!originalPhoto && <UploadDropZone />}
+              {originalPhoto && !restoredImage && (
+                <Image
+                  alt="original photo"
+                  src={originalPhoto}
+                  className="rounded-2xl h-96"
+                  width={582}
+                  height={450}
+                />
+              )}
+              {originalPhoto && !restoredImage && (
+                <S.Button
+                  onClick={() => {
+                    generatePhoto(originalPhoto);
+                    setIsRemodeled(true);
+                  }}
                 >
-                  <Toggle
-                    className={`${restoredLoaded ? "visible mb-6" : "invisible"}`}
-                    sideBySide={sideBySide}
-                    setSideBySide={(newVal) => setSideBySide(newVal)}
-                  />
-                </div>
-                {restoredLoaded && sideBySide && (
-                  <CompareSlider
-                    original={originalPhoto!}
-                    restored={restoredImage!}
-                  />
-                )}
-                {!originalPhoto && <UploadDropZone />}
-                {originalPhoto && !restoredImage && (
-                  <Image
-                    alt="original photo"
-                    src={originalPhoto}
-                    className="rounded-2xl h-96"
-                    width={582}
-                    height={450}
-                  />
-                )}
-                {originalPhoto && !restoredImage && (
-                  <S.Button
-                    onClick={() => {
-                      generatePhoto(originalPhoto);
-                      setIsRemodeled(true);
-                    }}
-                  >
-                    {loading ? (
-                      <LoadingDots color="white" style="large" />
-                    ) : (
-                      "리모델링하기"
-                    )}
-                  </S.Button>
-                )}
-                {restoredImage && originalPhoto && !sideBySide && (
-                  <div className="flex sm:space-x-4 sm:flex-row flex-col">
-                    <div>
-                      <h2 className="mb-1 font-medium text-lg">Original Room</h2>
+                  {loading ? (
+                    <LoadingDots color="white" style="large" />
+                  ) : (
+                    "리모델링하기"
+                  )}
+                </S.Button>
+              )}
+              {restoredImage && originalPhoto && !sideBySide && (
+                <div className="flex sm:space-x-4 sm:flex-row flex-col">
+                  <div>
+                    <h2 className="mb-1 font-medium text-lg">Original Room</h2>
+                    <Image
+                      alt="original photo"
+                      src={originalPhoto}
+                      className="rounded-2xl relative w-full h-96"
+                      width={475}
+                      height={475}
+                    />
+                  </div>
+                  <div className="sm:mt-0 mt-8">
+                    <h2 className="mb-1 font-medium text-lg">Generated Room</h2>
+                    {restoredImage.map((value: string)=>{
+                      return(
+                        <Link href={value} target="_blank" rel="noreferrer">
                       <Image
-                        alt="original photo"
-                        src={originalPhoto}
-                        className="rounded-2xl relative w-full h-96"
+                        alt="restored photo"
+                        src={value}
+                        className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in w-full h-96"
                         width={475}
                         height={475}
+                        onLoadingComplete={() => setRestoredLoaded(true)}
                       />
-                    </div>
-                    <div className="sm:mt-0 mt-8">
-                      <h2 className="mb-1 font-medium text-lg">Generated Room</h2>
-                      <a href={restoredImage} target="_blank" rel="noreferrer">
-                        <Image
-                          alt="restored photo"
-                          src={restoredImage}
-                          className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in w-full h-96"
-                          width={475}
-                          height={475}
-                          onLoadingComplete={() => setRestoredLoaded(true)}
-                        />
-                      </a>
-                    </div>
+                    </Link>
+                      )
+                    })}
                   </div>
-                )}
-                {error && (
-                  <div
-                    className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mt-8"
-                    role="alert"
-                  >
-                    <span className="block sm:inline">{error}</span>
-                  </div>
-                )}
-                <div className="flex space-x-2 justify-center">
-                  {originalPhoto && loading && !isRemodeled && (
-                    <button
-                      onClick={() => {
-                        setOriginalPhoto(null);
-                        setRestoredImage(null);
-                        setRestoredLoaded(false);
-                        setError(null);
-                      }}
-                      className="bg-blue-500 rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-blue-500/80 transition"
-                    >
-                      Generate New Room
-                    </button>
-                  )}
-                  {restoredLoaded && (
-                    <button
-                      onClick={() => {
-                        downloadPhoto(
-                          restoredImage!,
-                          appendNewToName(photoName!),
-                        );
-                      }}
-                      className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-8 hover:bg-gray-100 transition"
-                    >
-                      Download Generated Room
-                    </button>
-                  )}
                 </div>
-              </motion.div>
-            </AnimatePresence>
-          </ResizablePanel>
-        </main>
-      </div>
+              )}
+              {error && (
+                <div
+                  className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mt-8"
+                  role="alert"
+                >
+                  <span className="block sm:inline">{error}</span>
+                </div>
+              )}
+              <div className="flex space-x-2 justify-center">
+                {originalPhoto && loading && !isRemodeled && (
+                  <button
+                    onClick={() => {
+                      setOriginalPhoto(null);
+                      setRestoredImage(null);
+                      setRestoredLoaded(false);
+                      setError(null);
+                    }}
+                    className="bg-blue-500 rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-blue-500/80 transition"
+                  >
+                    Generate New Room
+                  </button>
+                )}
+                {restoredLoaded && (
+                  <button
+                    onClick={() => {
+                      downloadPhoto(
+                        restoredImage!,
+                        appendNewToName(photoName!),
+                      );
+                    }}
+                    className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-8 hover:bg-gray-100 transition"
+                  >
+                    Download Generated Room
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </ResizablePanel>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 }
