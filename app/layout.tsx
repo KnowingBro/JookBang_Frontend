@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import "../styles/globals.css";
 import Layout from "../components/layout";
 
-let title = "죽빵";
+let title = "죽방";
 let description = "Generate your dream room in seconds.";
 let ogimage = "https://roomgpt-demo.vercel.app/og-image.png";
 let sitename = "roomGPT.io";

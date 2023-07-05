@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  font-family: "Pretendard";
+}
+
 @media (min-width: 400px) {
 
 }

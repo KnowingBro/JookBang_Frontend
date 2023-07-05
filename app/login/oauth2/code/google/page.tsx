@@ -16,7 +16,7 @@ export default function GoogleOauth() {
       
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-
+      
       router.push('/');
     },
     onError: (error) => {
