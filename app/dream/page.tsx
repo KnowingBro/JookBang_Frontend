@@ -160,12 +160,12 @@ export default function DreamPage() {
                   setSideBySide={(newVal) => setSideBySide(newVal)}
                 />
               </div>
-              {/* {restoredLoaded && sideBySide && (
+              {restoredLoaded && sideBySide && (
                 <CompareSlider
                   original={originalPhoto!}
                   restored={restoredImage!}
                 />
-              )} */}
+              )}
               {!originalPhoto && <UploadDropZone />}
               {originalPhoto && !restoredImage && (
                 <Image
