@@ -134,24 +134,28 @@ export default function DreamPage() {
                     </div>
                     <div className="mt-4 w-full max-w-sm">
                       <div className="flex mt-6 w-96 items-center space-x-3">
-                        <S.P2 className="text-left font-medium">
+                        <S.P2 className="text-left font-medium marginBottom">
                           방 사진 업로드
                         </S.P2>
                       </div>
                     </div>
                   </>
                 )}
-                <div
-                  className={`${restoredLoaded ? "visible mt-6" : "invisible"}`}
-                >
-                  <Toggle
+                {isRemodeled && (
+                  <div
                     className={`${
-                      restoredLoaded ? "visible mb-6" : "invisible"
+                      restoredLoaded ? "visible mt-6" : "invisible"
                     }`}
-                    sideBySide={sideBySide}
-                    setSideBySide={(newVal) => setSideBySide(newVal)}
-                  />
-                </div>
+                  >
+                    <Toggle
+                      className={`${
+                        restoredLoaded ? "visible mb-6" : "invisible"
+                      }`}
+                      sideBySide={sideBySide}
+                      setSideBySide={(newVal) => setSideBySide(newVal)}
+                    />
+                  </div>
+                )}
                 {restoredLoaded && sideBySide && (
                   <CompareSlider
                     original={originalPhoto!}
@@ -219,6 +223,11 @@ export default function DreamPage() {
                 )}
                 <div className="flex space-x-2 justify-center">
                   {restoredLoaded && (
+                    <button className={`save ${!sideBySide && "sbs"}`}>
+                      마이홈에 저장
+                    </button>
+                  )}
+                  {restoredLoaded && (
                     <button
                       onClick={() => {
                         setOriginalPhoto(null);
@@ -226,9 +235,9 @@ export default function DreamPage() {
                         setRestoredLoaded(false);
                         setError(null);
                       }}
-                      className={`save ${!sideBySide && "sbs"}`}
+                      className={`download ${!sideBySide && "sbs"}`}
                     >
-                      마이홈에 저장
+                      다시 생성하기
                     </button>
                   )}
                   {restoredLoaded && (
