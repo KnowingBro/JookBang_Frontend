@@ -23,7 +23,7 @@ export default function HomePage() {
             둘러보세요.죽방은 방의 새로운 가치를 발굴합니다.
           </S.SubTitle>
         </S.MainText>
-        <Link href="/generate">
+        <Link href="/dream">
           <S.Btn>내 방 리모델링하기</S.Btn>
         </Link>
         <S.MainImages>
