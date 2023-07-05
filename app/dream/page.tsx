@@ -7,7 +7,7 @@ import { UploadDropzone } from "react-uploader";
 import { Uploader } from "uploader";
 import { CompareSlider } from "../../components/CompareSlider";
 import Footer from "../../components/Footer";
-import Header from "../../components/Header";
+import Header from "../../components/Header/Header";
 import LoadingDots from "../../components/LoadingDots";
 import ResizablePanel from "../../components/ResizablePanel";
 import Toggle from "../../components/Toggle";

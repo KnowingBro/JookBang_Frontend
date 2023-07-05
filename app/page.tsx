@@ -1,12 +1,14 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "../components/Footer";
-import Header from "../components/Header";
+import Header from "../components/Header/Header";
 import SquigglyLines from "../components/SquigglyLines";
+import * as S from "./Style"
 
 export default function HomePage() {
   return (
-    <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
+    <S.Container>
       <Header />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 sm:mt-20 mt-20 background-gradient">
         <a
@@ -27,8 +29,6 @@ export default function HomePage() {
           for everyone.
         </h1>
         <h2 className="mx-auto mt-12 max-w-xl text-lg sm:text-gray-400  text-gray-500 leading-7">
-          Take a picture of your room and see how your room looks in different
-          themes. 100% free – remodel your room today.
         </h2>
         <Link
           className="bg-blue-600 rounded-xl text-white font-medium px-4 py-3 sm:mt-10 mt-8 hover:bg-blue-500 transition"
@@ -64,6 +64,6 @@ export default function HomePage() {
         </div>
       </main>
       <Footer />
-    </div>
+    </S.Container>
   );
 }
