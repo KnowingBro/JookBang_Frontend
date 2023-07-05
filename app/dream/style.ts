@@ -29,3 +29,11 @@ export const Button = styled.button`
   border-radius: 8px;
   margin: 64px 0;
 `;
+
+
+export const ResultImage = styled.div`
+  display: flex;
+  height: 175px;
+  gap: 20px;
+  margin-bottom: 20px;
+`
