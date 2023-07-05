@@ -2,10 +2,12 @@ import { styled } from "styled-components";
 
 export const Container = styled.div`
     width: 100vw;
+    height: 180vh;
     padding: 0 123px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: "Pretendard";
 `
 
 export const MainText = styled.div`
@@ -61,4 +63,5 @@ export const MainImages = styled.div`
 `
 
 export const Image = styled.img`
+    width: 100%;
 `
