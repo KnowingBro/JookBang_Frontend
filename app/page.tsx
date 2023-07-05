@@ -26,8 +26,8 @@ export default function HomePage() {
           <S.Btn>내 방 리모델링하기</S.Btn>
         </Link>
         <S.MainImages>
-          <Image src={Main01} alt="Main Image 1" />
-          <Image src={Main02} alt="Main Image 2" />
+          <Image src={Main01} alt="Main Image 1" width={582}/>
+          <Image src={Main02} alt="Main Image 2" width={582}/>
         </S.MainImages>
       </S.Container>
       <Footer />
