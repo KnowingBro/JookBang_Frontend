@@ -17,6 +17,7 @@ import DropDown from "../../components/DropDown";
 import { roomType, rooms, themeType, themes } from "../../utils/dropdownTypes";
 import * as S from "./style";
 import Link from "next/link";
+import { styled } from "styled-components";
 
 // Configuration for the uploader
 const uploader = Uploader({
@@ -73,6 +74,14 @@ export default function DreamPage() {
     />
   );
 
+  const Container = styled.div`
+    width: 100ww;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 123px;
+  `
+
   async function generatePhoto(fileUrl: string) {
     await new Promise((resolve) => setTimeout(resolve, 200));
     setLoading(true);
@@ -103,8 +112,7 @@ export default function DreamPage() {
   }, [restoredImage]);
 
   return (
-    <>
-      <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
+      <Container>
         <Header />
         <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
           <S.H1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-100 sm:text-6xl mb-5">
@@ -275,8 +283,7 @@ export default function DreamPage() {
             </AnimatePresence>
           </ResizablePanel>
         </main>
-      </div>
       <Footer />
-    </>
+    </Container>
   );
 }
