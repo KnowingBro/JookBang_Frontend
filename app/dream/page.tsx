@@ -77,7 +77,7 @@ export default function DreamPage() {
     await new Promise((resolve) => setTimeout(resolve, 200));
     setLoading(true);
     const newArr = []
-    for(let i=0;i<4;i++){
+    for (let i = 0; i < 4; i++) {
       const res = await fetch("/generate", {
         method: "POST",
         headers: {
@@ -98,7 +98,7 @@ export default function DreamPage() {
     }, 1300);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(restoredImage)
   }, [restoredImage]);
 
@@ -150,9 +150,8 @@ export default function DreamPage() {
                 </>
               )}
               <div
-                className={`${
-                  restoredLoaded ? "visible mt-6 -ml-8" : "invisible"
-                }`}
+                className={`${restoredLoaded ? "visible mt-6 -ml-8" : "invisible"
+                  }`}
               >
                 <Toggle
                   className={`${restoredLoaded ? "visible mb-6" : "invisible"}`}
@@ -197,27 +196,41 @@ export default function DreamPage() {
                     <Image
                       alt="original photo"
                       src={originalPhoto}
-                      className="rounded-2xl relative w-full h-96"
-                      width={475}
-                      height={475}
+                      style={{width: "582px", height: "370px", borderRadius: "16px"}}
+                      width={582}
+                      height={370}
                     />
                   </div>
                   <div className="sm:mt-0 mt-8">
                     <h2 className="mb-1 font-medium text-lg">Generated Room</h2>
-                    {restoredImage.map((value: string)=>{
-                      return(
-                        <Link href={value} target="_blank" rel="noreferrer">
-                      <Image
-                        alt="restored photo"
-                        src={value}
-                        className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in w-full h-96"
-                        width={475}
-                        height={475}
-                        onLoadingComplete={() => setRestoredLoaded(true)}
-                      />
-                    </Link>
-                      )
-                    })}
+                    <S.ResultImage>
+                      {restoredImage.slice(0, 2).map((value: string) => {
+                        return (
+                          <Image
+                            alt="restored photo"
+                            style={{borderRadius: "16px"}}
+                            src={value}
+                            width={281}
+                            height={175}
+                            onLoadingComplete={() => setRestoredLoaded(true)}
+                          />
+                        )
+                      })}
+                    </S.ResultImage>
+                    <S.ResultImage>
+                      {restoredImage.slice(2, 4).map((value: string) => {
+                        return (
+                          <Image
+                            alt="restored photo"
+                            style={{borderRadius: "16px"}}
+                            src={value}
+                            width={281}
+                            height={175}
+                            onLoadingComplete={() => setRestoredLoaded(true)}
+                          />
+                        )
+                      })}
+                    </S.ResultImage>
                   </div>
                 </div>
               )}
