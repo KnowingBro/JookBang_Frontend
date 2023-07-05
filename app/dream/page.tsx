@@ -112,6 +112,7 @@ export default function DreamPage() {
   }, [restoredImage]);
 
   return (
+    <>
       <Container>
         <Header />
         <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
@@ -283,7 +284,8 @@ export default function DreamPage() {
             </AnimatePresence>
           </ResizablePanel>
         </main>
+      </Container>
       <Footer />
-    </Container>
+    </>
   );
 }

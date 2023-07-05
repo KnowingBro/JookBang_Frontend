@@ -52,7 +52,7 @@ export const CompareSlider = ({ original, restored }: {
             <ReactCompareSlider
               itemOne={<ReactCompareSliderImage src={original} alt="original photo" />}
               itemTwo={<ReactCompareSliderImage src={value} style={{ position: "absolute" }} alt="generated photo" />}
-              className="flex w-[582px] mt-5 h-96"
+              className="flex w-[550px] mt-5 h-96"
               style={{ borderRadius: "16px" }}
             />
           )
