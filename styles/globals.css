@@ -6,6 +6,47 @@
   font-family: "Pretendard";
 }
 
-@media (min-width: 400px) {
+.primary {
+  background-color: #ff6c3e;
+}
 
+.gray400 {
+  background-color: #828282;
+}
+
+.sbs {
+  margin-top: 4px;
+}
+
+.h4 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1c1c1c;
+  line-height: 140%;
+  margin-top: 16px;
+}
+
+.save {
+  color: #ffffff;
+  background-color: #ff6c3e;
+  width: 146px;
+  height: 48px;
+  font-size: 18px;
+  line-height: 130%;
+  border-radius: 8px;
+  padding: 12.5px 24px;
+}
+
+.download {
+  color: #525252;
+  background-color: #efefef;
+  width: 146px;
+  height: 48px;
+  font-size: 18px;
+  line-height: 130%;
+  border-radius: 8px;
+  padding: 12.5px 24px;
+}
+
+@media (min-width: 400px) {
 }

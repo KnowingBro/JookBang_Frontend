@@ -10,7 +10,7 @@ import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import LoadingDots from "../../components/LoadingDots";
 import ResizablePanel from "../../components/ResizablePanel";
-import Toggle from "../../components/Toggle";
+import Toggle from "../../components/Toggle/Toggle";
 import appendNewToName from "../../utils/appendNewToName";
 import downloadPhoto from "../../utils/downloadPhoto";
 import DropDown from "../../components/DropDown";
@@ -142,11 +142,12 @@ export default function DreamPage() {
                   </>
                 )}
                 <div
-                  className={`${restoredLoaded ? "visible mt-6 -ml-8" : "invisible"
-                    }`}
+                  className={`${restoredLoaded ? "visible mt-6" : "invisible"}`}
                 >
                   <Toggle
-                    className={`${restoredLoaded ? "visible mb-6" : "invisible"}`}
+                    className={`${
+                      restoredLoaded ? "visible mb-6" : "invisible"
+                    }`}
                     sideBySide={sideBySide}
                     setSideBySide={(newVal) => setSideBySide(newVal)}
                   />
@@ -184,7 +185,6 @@ export default function DreamPage() {
                 {restoredImage && originalPhoto && !sideBySide && (
                   <div className="flex sm:space-x-4 sm:flex-row flex-col">
                     <div>
-                      <h2 className="mb-1 font-medium text-lg">Original Room</h2>
                       <Image
                         alt="original photo"
                         src={originalPhoto}
@@ -192,9 +192,9 @@ export default function DreamPage() {
                         width={475}
                         height={475}
                       />
+                      <h2 className="mb-1 font-medium text-lg h4">Before</h2>
                     </div>
                     <div className="sm:mt-0 mt-8">
-                      <h2 className="mb-1 font-medium text-lg">Generated Room</h2>
                       <a href={restoredImage} target="_blank" rel="noreferrer">
                         <Image
                           alt="restored photo"
@@ -204,6 +204,7 @@ export default function DreamPage() {
                           height={475}
                           onLoadingComplete={() => setRestoredLoaded(true)}
                         />
+                        <h2 className="mb-1 font-medium text-lg h4">After</h2>
                       </a>
                     </div>
                   </div>
@@ -217,7 +218,7 @@ export default function DreamPage() {
                   </div>
                 )}
                 <div className="flex space-x-2 justify-center">
-                  {originalPhoto && loading && !isRemodeled && (
+                  {restoredLoaded && (
                     <button
                       onClick={() => {
                         setOriginalPhoto(null);
@@ -225,9 +226,9 @@ export default function DreamPage() {
                         setRestoredLoaded(false);
                         setError(null);
                       }}
-                      className="bg-blue-500 rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-blue-500/80 transition"
+                      className={`save ${!sideBySide && "sbs"}`}
                     >
-                      Generate New Room
+                      마이홈에 저장
                     </button>
                   )}
                   {restoredLoaded && (
@@ -238,9 +239,9 @@ export default function DreamPage() {
                           appendNewToName(photoName!),
                         );
                       }}
-                      className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-8 hover:bg-gray-100 transition"
+                      className={`download ${!sideBySide && "sbs"}`}
                     >
-                      Download Generated Room
+                      전체 다운로드
                     </button>
                   )}
                 </div>
