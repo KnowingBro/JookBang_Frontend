@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import * as S from "./Style";
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const [userName, setUserName] = useState("");
+  const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -42,7 +44,9 @@ export default function Header() {
       <div>
         {loggedIn ? (
           <>
-            <button className="bg-orange100 w-[88px] h-[36px] text-white mr-3 rounded-lg">
+            <button className="bg-orange100 w-[88px] h-[36px] text-white mr-3 rounded-lg" onClick={() => {
+              router.push('/myroom');
+            }}>
               마이룸{/* {userName} */}
             </button>
             <button
