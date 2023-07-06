@@ -55,10 +55,10 @@ export const PicDiv = styled.div`
   height: 100%;
 `
 export const Pic = styled.div`
-  background-color: #eaeaea;
+  background-color: #f7f7f7;
   width: 550px;
   height: 460px;
-  border-radius: 7px;
+  border-radius: 24px;
   margin: 20px;
 `
 export const RoomName = styled.div`
@@ -76,7 +76,8 @@ export const Rooms = styled.div`
   justify-content: space-between;
 `
 export const RoomText = styled.div`
-  font-size: 20px;
+  font-size: 24px;
+  font-weight: 700;
 `
 export const PictureTable = styled.div`
   width: 100%;
@@ -88,5 +89,9 @@ export const PicturesDiv = styled.div`
   margin: 10px;
   width: 255px;
   height: 160px;
-  background-color: red;
+`
+export const Img = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
 `

@@ -2,20 +2,25 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadDropzone } from "react-uploader";
 import { Uploader } from "uploader";
-import { CompareSlider } from "../../components/CompareSlider";
+import { CompareSlider } from "../../components/CompareSlider/CompareSlider";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import LoadingDots from "../../components/LoadingDots";
 import ResizablePanel from "../../components/ResizablePanel";
-import Toggle from "../../components/Toggle";
+import Toggle from "../../components/Toggle/Toggle";
 import appendNewToName from "../../utils/appendNewToName";
 import downloadPhoto from "../../utils/downloadPhoto";
 import DropDown from "../../components/DropDown";
 import { roomType, rooms, themeType, themes } from "../../utils/dropdownTypes";
 import * as S from "./style";
+import Link from "next/link";
+import { styled } from "styled-components";
+import { instance } from "../../utils/instance";
+import { headers } from "next/headers";
+import { useRouter } from "next/navigation";
 
 // Configuration for the uploader
 const uploader = Uploader({
@@ -46,8 +51,9 @@ const options = {
 };
 
 export default function DreamPage() {
+  const route = useRouter();
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
-  const [restoredImage, setRestoredImage] = useState<string | null>(null);
+  const [restoredImage, setRestoredImage] = useState<string[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [restoredLoaded, setRestoredLoaded] = useState<boolean>(false);
   const [sideBySide, setSideBySide] = useState<boolean>(false);
@@ -72,30 +78,70 @@ export default function DreamPage() {
     />
   );
 
+  const Container = styled.div`
+    width: 100ww;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 123px;
+  `
+
   async function generatePhoto(fileUrl: string) {
     await new Promise((resolve) => setTimeout(resolve, 200));
     setLoading(true);
-    const res = await fetch("/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ imageUrl: fileUrl, theme, room }),
-    });
-    const newPhoto = await res.json();
-    if (res.status !== 200) {
-      setError(newPhoto);
-    } else {
-      setRestoredImage(newPhoto[1]);
+    const newArr = []
+    for (let i = 0; i < 4; i++) {
+      const res = await fetch("/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl: fileUrl, theme, room }),
+      });
+      const newPhoto = await res.json();
+      if (res.status !== 200) {
+        console.log(res);
+        setError(newPhoto);
+      } else {
+        newArr.push(newPhoto[1])
+      }
     }
+    setRestoredImage(newArr);
     setTimeout(() => {
       setLoading(false);
     }, 1300);
   }
-  console.log(loading);
+
+  useEffect(() => {
+    console.log(restoredImage)
+  }, [restoredImage]);
+
+  const saveMyHome = () => {
+    const name = theme + "한 " + room;
+    if (restoredImage !== null) {
+      const data = {
+        name: name,
+        originUrl: originalPhoto,
+        newUrl1: restoredImage[0],
+        newUrl2: restoredImage[1],
+        newUrl3: restoredImage[2],
+        newUrl4: restoredImage[3]
+      }
+      instance.post('/image', data, {
+        headers: {
+          Authorization: localStorage.accessToken,
+        }
+      }).then((response) => {
+        console.log("good")
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+  }
+
   return (
     <>
-      <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
+      <Container>
         <Header />
         <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
           <S.H1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-100 sm:text-6xl mb-5">
@@ -142,11 +188,12 @@ export default function DreamPage() {
                   </>
                 )}
                 <div
-                  className={`${restoredLoaded ? "visible mt-6 -ml-8" : "invisible"
-                    }`}
+                  className={`${restoredLoaded ? "visible mt-6" : "invisible"}`}
                 >
                   <Toggle
-                    className={`${restoredLoaded ? "visible mb-6" : "invisible"}`}
+                    className={`${
+                      restoredLoaded ? "visible mb-6" : "invisible"
+                    }`}
                     sideBySide={sideBySide}
                     setSideBySide={(newVal) => setSideBySide(newVal)}
                   />
@@ -184,27 +231,45 @@ export default function DreamPage() {
                 {restoredImage && originalPhoto && !sideBySide && (
                   <div className="flex sm:space-x-4 sm:flex-row flex-col">
                     <div>
-                      <h2 className="mb-1 font-medium text-lg">Original Room</h2>
                       <Image
                         alt="original photo"
                         src={originalPhoto}
-                        className="rounded-2xl relative w-full h-96"
-                        width={475}
-                        height={475}
+                        style={{ width: "582px", height: "370px", borderRadius: "16px" }}
+                        width={582}
+                        height={370}
                       />
+                      <h2 className="mb-1 font-medium text-lg h4">Before</h2>
                     </div>
                     <div className="sm:mt-0 mt-8">
-                      <h2 className="mb-1 font-medium text-lg">Generated Room</h2>
-                      <a href={restoredImage} target="_blank" rel="noreferrer">
-                        <Image
-                          alt="restored photo"
-                          src={restoredImage}
-                          className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in w-full h-96"
-                          width={475}
-                          height={475}
-                          onLoadingComplete={() => setRestoredLoaded(true)}
-                        />
-                      </a>
+                      <S.ResultImage>
+                        {restoredImage.slice(0, 2).map((value: string) => {
+                          return (
+                            <Image
+                              alt="restored photo"
+                              style={{ borderRadius: "16px" }}
+                              src={value}
+                              width={281}
+                              height={175}
+                              onLoadingComplete={() => setRestoredLoaded(true)}
+                            />
+                          )
+                        })}
+                      </S.ResultImage>
+                      <S.ResultImage>
+                        {restoredImage.slice(2, 4).map((value: string) => {
+                          return (
+                            <Image
+                              alt="restored photo"
+                              style={{ borderRadius: "16px" }}
+                              src={value}
+                              width={281}
+                              height={175}
+                              onLoadingComplete={() => setRestoredLoaded(true)}
+                            />
+                          )
+                        })}
+                      </S.ResultImage>
+                      <h2 className="mb-1 font-medium text-lg">After</h2>
                     </div>
                   </div>
                 )}
@@ -217,17 +282,15 @@ export default function DreamPage() {
                   </div>
                 )}
                 <div className="flex space-x-2 justify-center">
-                  {originalPhoto && loading && !isRemodeled && (
+                  {restoredLoaded && (
                     <button
                       onClick={() => {
-                        setOriginalPhoto(null);
-                        setRestoredImage(null);
-                        setRestoredLoaded(false);
-                        setError(null);
+                        saveMyHome();
+                        route.push("/myroom")
                       }}
-                      className="bg-blue-500 rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-blue-500/80 transition"
+                      className={`save ${!sideBySide && "sbs"}`}
                     >
-                      Generate New Room
+                      마이홈에 저장
                     </button>
                   )}
                   {restoredLoaded && (
@@ -238,9 +301,9 @@ export default function DreamPage() {
                           appendNewToName(photoName!),
                         );
                       }}
-                      className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-8 hover:bg-gray-100 transition"
+                      className={`download ${!sideBySide && "sbs"}`}
                     >
-                      Download Generated Room
+                      전체 다운로드
                     </button>
                   )}
                 </div>
@@ -248,7 +311,7 @@ export default function DreamPage() {
             </AnimatePresence>
           </ResizablePanel>
         </main>
-      </div>
+      </Container>
       <Footer />
     </>
   );
