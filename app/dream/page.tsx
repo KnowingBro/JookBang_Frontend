@@ -47,6 +47,17 @@ const options = {
   },
 };
 
+const Container = styled.div<{ flag: boolean }>`
+  width: 100vw;
+  height: 116vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 123px;
+  max-height: 200vh;
+  height: ${({ flag }) => (flag ? "140vh" : "116vh")};
+`;
+
+const DEFAULT = "옵션을 선택하세요";
 export default function DreamPage() {
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
   const [restoredImage, setRestoredImage] = useState<string[] | null>(null);
@@ -55,9 +66,11 @@ export default function DreamPage() {
   const [sideBySide, setSideBySide] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [photoName, setPhotoName] = useState<string | null>(null);
-  const [theme, setTheme] = useState<themeType>("옵션을 선택하세요");
-  const [room, setRoom] = useState<roomType>("옵션을 선택하세요");
+  const [theme, setTheme] = useState<themeType>(DEFAULT);
+  const [room, setRoom] = useState<roomType>(DEFAULT);
   const [isRemodeled, setIsRemodeled] = useState<boolean>(false);
+  const [flag, setFlag] = useState<boolean>(false);
+  const [nonchecked, setNonchecked] = useState<boolean>(false);
 
   const UploadDropZone = () => (
     <UploadDropzone
@@ -74,18 +87,20 @@ export default function DreamPage() {
     />
   );
 
-  const Container = styled.div`
-    width: 100ww;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 0 123px;
-  `
+  const click = () => {
+    if (theme === DEFAULT || room === DEFAULT) {
+      setNonchecked(true);
+      return;
+    }
+    setNonchecked(false);
+    generatePhoto(originalPhoto);
+    setIsRemodeled(true);
+  };
 
-  async function generatePhoto(fileUrl: string) {
+  async function generatePhoto(fileUrl: string | null) {
     await new Promise((resolve) => setTimeout(resolve, 200));
     setLoading(true);
-    const newArr = []
+    const newArr = [];
     for (let i = 0; i < 4; i++) {
       const res = await fetch("/generate", {
         method: "POST",
@@ -98,7 +113,7 @@ export default function DreamPage() {
       if (res.status !== 200) {
         setError(newPhoto);
       } else {
-        newArr.push(newPhoto[1])
+        newArr.push(newPhoto[1]);
       }
     }
     setRestoredImage(newArr);
@@ -108,12 +123,12 @@ export default function DreamPage() {
   }
 
   useEffect(() => {
-    console.log(restoredImage)
+    console.log(restoredImage);
   }, [restoredImage]);
 
   return (
     <>
-      <Container>
+      <Container flag={flag}>
         <Header />
         <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
           <S.H1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-100 sm:text-6xl mb-5">
@@ -149,6 +164,9 @@ export default function DreamPage() {
                         setTheme={(newRoom) => setRoom(newRoom as typeof room)}
                         themes={rooms}
                       />
+                      {nonchecked && (
+                        <div className="warning">옵션을 선택해주세요.</div>
+                      )}
                     </div>
                     <div className="mt-4 w-full max-w-sm">
                       <div className="flex mt-6 w-96 items-center space-x-3">
@@ -162,15 +180,18 @@ export default function DreamPage() {
                 {isRemodeled && (
                   <div
                     className={`${
-                      restoredLoaded ? "visible mt-6" : "invisible"
+                      !loading && restoredLoaded ? "visible mt-6" : "invisible"
                     }`}
                   >
                     <Toggle
                       className={`${
-                        restoredLoaded ? "visible mb-6" : "invisible"
+                        !loading && restoredLoaded
+                          ? "visible mb-6"
+                          : "invisible"
                       }`}
                       sideBySide={sideBySide}
                       setSideBySide={(newVal) => setSideBySide(newVal)}
+                      setFlag={setFlag}
                     />
                   </div>
                 )}
@@ -191,12 +212,7 @@ export default function DreamPage() {
                   />
                 )}
                 {originalPhoto && !restoredImage && (
-                  <S.Button
-                    onClick={() => {
-                      generatePhoto(originalPhoto);
-                      setIsRemodeled(true);
-                    }}
-                  >
+                  <S.Button onClick={click}>
                     {loading ? (
                       <LoadingDots color="white" style="large" />
                     ) : (
@@ -210,14 +226,17 @@ export default function DreamPage() {
                       <Image
                         alt="original photo"
                         src={originalPhoto}
-                        style={{ width: "582px", height: "370px", borderRadius: "16px" }}
+                        style={{
+                          width: "582px",
+                          height: "370px",
+                          borderRadius: "16px",
+                        }}
                         width={582}
                         height={370}
                       />
                       <h2 className="mb-1 font-medium text-lg h4">Before</h2>
                     </div>
                     <div className="sm:mt-0 mt-8">
-                      <h2 className="mb-1 font-medium text-lg">Generated Room</h2>
                       <S.ResultImage>
                         {restoredImage.slice(0, 2).map((value: string) => {
                           return (
@@ -229,7 +248,7 @@ export default function DreamPage() {
                               height={175}
                               onLoadingComplete={() => setRestoredLoaded(true)}
                             />
-                          )
+                          );
                         })}
                       </S.ResultImage>
                       <S.ResultImage>
@@ -243,9 +262,10 @@ export default function DreamPage() {
                               height={175}
                               onLoadingComplete={() => setRestoredLoaded(true)}
                             />
-                          )
+                          );
                         })}
                       </S.ResultImage>
+                      <h2 className="mb-1 font-medium text-lg h4">After</h2>
                     </div>
                   </div>
                 )}

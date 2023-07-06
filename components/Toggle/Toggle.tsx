@@ -1,5 +1,6 @@
 import { Switch } from "@headlessui/react";
 import * as S from "./style";
+import { SetStateAction } from "react";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -8,11 +9,13 @@ function classNames(...classes: string[]) {
 export interface ToggleProps extends React.HTMLAttributes<HTMLDivElement> {
   sideBySide: boolean;
   setSideBySide: (sideBySide: boolean) => void;
+  setFlag: React.Dispatch<SetStateAction<boolean>>;
 }
 
 export default function Toggle({
   sideBySide,
   setSideBySide,
+  setFlag,
   ...props
 }: ToggleProps) {
   return (
@@ -23,6 +26,7 @@ export default function Toggle({
             className={!sideBySide ? "primary" : ""}
             onClick={() => {
               setSideBySide(!sideBySide);
+              setFlag(false);
             }}
           >
             나란히 보기
@@ -31,6 +35,7 @@ export default function Toggle({
             className={sideBySide ? "primary" : ""}
             onClick={() => {
               setSideBySide(!sideBySide);
+              setFlag(true);
             }}
           >
             겹쳐서 보기

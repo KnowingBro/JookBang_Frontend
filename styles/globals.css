@@ -54,5 +54,15 @@
   margin-bottom: 16px;
 }
 
+.invisible {
+  display: none;
+}
+
+.warning {
+  color: red;
+  font-size: 24px;
+  text-align: center;
+}
+
 @media (min-width: 400px) {
 }
