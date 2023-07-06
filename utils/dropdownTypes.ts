@@ -12,7 +12,6 @@ export type roomType =
   | "침실"
   | "화장실"
   | "사무실"
-  | "게임방"
   | "옵션을 선택하세요";
 
 export const themes: themeType[] = [
@@ -22,11 +21,4 @@ export const themes: themeType[] = [
   "트로피칼",
   "빈티지",
 ];
-export const rooms: roomType[] = [
-  "거실",
-  "식당",
-  "사무실",
-  "침실",
-  "화장실",
-  "게임방",
-];
+export const rooms: roomType[] = ["거실", "식당", "사무실", "침실", "화장실"];

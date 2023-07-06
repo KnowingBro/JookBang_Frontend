@@ -51,7 +51,7 @@ const options = {
 };
 
 const Container = styled.div<{ flag: boolean }>`
-  width: 100vw;
+  width: 100%;
   height: 116vh;
   display: flex;
   flex-direction: column;
@@ -127,7 +127,7 @@ export default function DreamPage() {
   }
 
   useEffect(() => {
-    console.log(restoredImage)
+    console.log(restoredImage);
   }, [restoredImage]);
 
   const saveMyHome = () => {
@@ -139,19 +139,22 @@ export default function DreamPage() {
         newUrl1: restoredImage[0],
         newUrl2: restoredImage[1],
         newUrl3: restoredImage[2],
-        newUrl4: restoredImage[3]
-      }
-      instance.post('/image', data, {
-        headers: {
-          Authorization: localStorage.accessToken,
-        }
-      }).then((response) => {
-        console.log("good")
-      }).catch((err) => {
-        console.log(err)
-      })
+        newUrl4: restoredImage[3],
+      };
+      instance
+        .post("/image", data, {
+          headers: {
+            Authorization: localStorage.accessToken,
+          },
+        })
+        .then((response) => {
+          console.log("good");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-  }
+  };
 
   return (
     <>
@@ -306,18 +309,18 @@ export default function DreamPage() {
                 )}
                 <div className="flex space-x-2 justify-center">
                   {restoredLoaded && (
-                    <button 
+                    <button
                       onClick={() => {
                         saveMyHome();
-                        route.push("/myroom") 
-                      }
-                      className={`save ${!sideBySide && "sbs"}`}>
+                        route.push("/myroom");
+                      }}
+                      className={`save ${!sideBySide && "sbs"}`}
+                    >
                       마이홈에 저장
                     </button>
                   )}
                   {restoredLoaded && (
-                    <button className={`download ${!sideBySide && "sbs"}`}
-                    >
+                    <button className={`download ${!sideBySide && "sbs"}`}>
                       다시 생성하기
                     </button>
                   )}
