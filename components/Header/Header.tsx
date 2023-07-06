@@ -1,5 +1,5 @@
-'use client'
-import { useEffect, useState } from 'react';
+"use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import * as S from "./Style";
@@ -8,11 +8,13 @@ import { useRouter } from 'next/navigation';
 export default function Header() {
   const [userName, setUserName] = useState("");
   const router = useRouter();
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
+    setLoggedIn(!!localStorage.accessToken);
     async function fetchUserName() {
       try {
-        const response = await fetch('http://192.168.10.142:8080/user', {
+        const response = await fetch("http://192.168.10.142:8080/user", {
           headers: {
             Authorization: `Bearer ${localStorage.accessToken}`,
           },
@@ -20,7 +22,7 @@ export default function Header() {
         const data = await response.json();
         setUserName(data.name);
       } catch (error) {
-        console.error('Failed to fetch user name:', error);
+        console.error("Failed to fetch user name:", error);
       }
     }
 
@@ -37,15 +39,10 @@ export default function Header() {
   return (
     <S.Container>
       <Link href="/" className="flex space-x-2">
-        <Image
-          alt="header text"
-          src="/asset/logo.svg"
-          width={81}
-          height={32}
-        />
+        <Image alt="header text" src="/asset/logo.svg" width={81} height={32} />
       </Link>
       <div>
-        {localStorage.accessToken ? (
+        {loggedIn ? (
           <>
             <button className="bg-orange100 w-[88px] h-[36px] text-white mr-3 rounded-lg" onClick={() => {
               router.push('/myroom');
