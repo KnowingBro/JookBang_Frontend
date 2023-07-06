@@ -18,6 +18,9 @@ import { roomType, rooms, themeType, themes } from "../../utils/dropdownTypes";
 import * as S from "./style";
 import Link from "next/link";
 import { styled } from "styled-components";
+import { instance } from "../../utils/instance";
+import { headers } from "next/headers";
+import { useRouter } from "next/navigation";
 
 // Configuration for the uploader
 const uploader = Uploader({
@@ -59,6 +62,7 @@ const Container = styled.div<{ flag: boolean }>`
 
 const DEFAULT = "옵션을 선택하세요";
 export default function DreamPage() {
+  const route = useRouter();
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
   const [restoredImage, setRestoredImage] = useState<string[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -123,8 +127,31 @@ export default function DreamPage() {
   }
 
   useEffect(() => {
-    console.log(restoredImage);
+    console.log(restoredImage)
   }, [restoredImage]);
+
+  const saveMyHome = () => {
+    const name = theme + "한 " + room;
+    if (restoredImage !== null) {
+      const data = {
+        name: name,
+        originUrl: originalPhoto,
+        newUrl1: restoredImage[0],
+        newUrl2: restoredImage[1],
+        newUrl3: restoredImage[2],
+        newUrl4: restoredImage[3]
+      }
+      instance.post('/image', data, {
+        headers: {
+          Authorization: localStorage.accessToken,
+        }
+      }).then((response) => {
+        console.log("good")
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+  }
 
   return (
     <>
@@ -279,19 +306,17 @@ export default function DreamPage() {
                 )}
                 <div className="flex space-x-2 justify-center">
                   {restoredLoaded && (
-                    <button className={`save ${!sideBySide && "sbs"}`}>
+                    <button 
+                      onClick={() => {
+                        saveMyHome();
+                        route.push("/myroom") 
+                      }
+                      className={`save ${!sideBySide && "sbs"}`}>
                       마이홈에 저장
                     </button>
                   )}
                   {restoredLoaded && (
-                    <button
-                      onClick={() => {
-                        setOriginalPhoto(null);
-                        setRestoredImage(null);
-                        setRestoredLoaded(false);
-                        setError(null);
-                      }}
-                      className={`download ${!sideBySide && "sbs"}`}
+                    <button className={`download ${!sideBySide && "sbs"}`}
                     >
                       다시 생성하기
                     </button>
