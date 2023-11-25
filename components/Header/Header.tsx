@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import * as S from "./Style";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [userName, setUserName] = useState("");
@@ -11,12 +11,12 @@ export default function Header() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    setLoggedIn(!!localStorage.accessToken);
+    setLoggedIn(!!localStorage.getItem("accessToken"));
     async function fetchUserName() {
       try {
         const response = await fetch("http://192.168.10.142:8080/user", {
           headers: {
-            Authorization: `Bearer ${localStorage.accessToken}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         });
         const data = await response.json();
@@ -26,7 +26,7 @@ export default function Header() {
       }
     }
 
-    if (localStorage.accessToken) {
+    if (localStorage.getItem("accessToken")) {
       fetchUserName();
     }
   }, []);
@@ -44,9 +44,12 @@ export default function Header() {
       <div>
         {loggedIn ? (
           <>
-            <button className="bg-orange100 w-[88px] h-[36px] text-white mr-3 rounded-lg" onClick={() => {
-              router.push('/myroom');
-            }}>
+            <button
+              className="bg-orange100 w-[88px] h-[36px] text-white mr-3 rounded-lg"
+              onClick={() => {
+                router.push("/myroom");
+              }}
+            >
               마이룸{/* {userName} */}
             </button>
             <button
