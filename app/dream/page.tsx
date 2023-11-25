@@ -144,7 +144,7 @@ export default function DreamPage() {
       instance
         .post("/image", data, {
           headers: {
-            Authorization: localStorage.accessToken,
+            Authorization: localStorage.getItem("accessToken"),
           },
         })
         .then((response) => {
