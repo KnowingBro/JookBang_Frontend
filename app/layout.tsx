@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import "../styles/globals.css";
 import Layout from "../components/layout";
+import StyledComponentsRegistry from "../lib/registry";
 
 let title = "죽방";
 let description = "Generate your dream room in seconds.";
@@ -40,7 +41,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-[#fff] text-color">
         <Layout>
-          {children}
+          <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
         </Layout>
         <Analytics />
       </body>
