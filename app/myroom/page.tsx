@@ -19,29 +19,29 @@ interface ImagesType {
 export default function Myroom() {
   const [userName, setUserName] = useState("");
   const [images, setImages] = useState([]);
-  const [accessToken, setAccessToken] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   useQuery(["user"], () => getUserInfo(), {
     onSuccess: (data) => {
       setUserName(data.name);
     },
-    enabled: accessToken,
+    enabled: isAuthorized,
   });
 
   useQuery(["getImage"], () => getImages(), {
     onSuccess: (data) => {
       setImages(data);
     },
-    enabled: accessToken,
+    enabled: isAuthorized,
   });
 
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
-      setAccessToken(!accessToken);
+      setIsAuthorized(!isAuthorized);
     } else {
-      setAccessToken(false);
+      setIsAuthorized(false);
     }
-  }, [localStorage.getItem("accessToken")]);
+  }, []);
 
   return (
     <S.Container>
@@ -49,12 +49,12 @@ export default function Myroom() {
       <S.NameDiv />
       <S.NameBox>
         <S.UserName>{userName}</S.UserName>님의 마이룸
-        <S.CountBall>{accessToken ? images.length : 0}</S.CountBall>
+        <S.CountBall>{isAuthorized ? images.length : 0}</S.CountBall>
       </S.NameBox>
       <S.NameBox2 />
       <S.MainDiv>
         <S.PicDiv>
-          {accessToken ? (
+          {isAuthorized ? (
             images.map((ele: ImagesType, index) => (
               <S.Pic key={index}>
                 <S.RoomName>
