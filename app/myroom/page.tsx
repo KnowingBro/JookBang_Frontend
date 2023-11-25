@@ -19,25 +19,29 @@ interface ImagesType {
 export default function Myroom() {
   const [userName, setUserName] = useState("");
   const [images, setImages] = useState([]);
-  const [mount, setMount] = useState(false);
+  const [accessToken, setAccessToken] = useState(false);
 
   useQuery(["user"], () => getUserInfo(), {
     onSuccess: (data) => {
       setUserName(data.name);
     },
-    enabled: mount && localStorage.getItem("accessToken") !== undefined,
+    enabled: accessToken,
   });
 
   useQuery(["getImage"], () => getImages(), {
     onSuccess: (data) => {
       setImages(data);
     },
-    enabled: mount && localStorage.getItem("accessToken") !== undefined,
+    enabled: accessToken,
   });
 
   useEffect(() => {
-    setMount(true);
-  }, []);
+    if (localStorage.getItem("accessToken")) {
+      setAccessToken(!accessToken);
+    } else {
+      setAccessToken(false);
+    }
+  }, [localStorage.getItem("accessToken")]);
 
   return (
     <S.Container>
@@ -45,14 +49,12 @@ export default function Myroom() {
       <S.NameDiv />
       <S.NameBox>
         <S.UserName>{userName}</S.UserName>님의 마이룸
-        <S.CountBall>
-          {localStorage.getItem("accessToken") ? images.length : 0}
-        </S.CountBall>
+        <S.CountBall>{accessToken ? images.length : 0}</S.CountBall>
       </S.NameBox>
       <S.NameBox2 />
       <S.MainDiv>
         <S.PicDiv>
-          {localStorage.getItem("accessToken") ? (
+          {accessToken ? (
             images.map((ele: ImagesType, index) => (
               <S.Pic key={index}>
                 <S.RoomName>
